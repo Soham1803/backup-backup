@@ -8,7 +8,7 @@ export class KafkaProducer {
     private constructor() {
         const kafka = new Kafka({
             clientId: 'backup-service',
-            brokers: [process.env.KAFKA_BROKER || 'http://192.168.1.16:9092'],
+            brokers: [process.env.KAFKA_BROKER || 'localhost:9092'],
         });
         this._producer = kafka.producer();
     }
