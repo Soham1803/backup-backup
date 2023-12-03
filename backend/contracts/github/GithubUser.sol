@@ -168,6 +168,7 @@ contract GitHubUserStorage {
     }
 
     function userExists(address userAddress) internal view returns (bool) {
-        return githubUsers[userAddress].gitHubDetails.id != 0;
+        uint256 userId = githubUsers[userAddress].gitHubDetails.id;
+        return userId > 0;
     }
 }
