@@ -10,40 +10,23 @@ import { Button } from '../ui/button';
 import ChatContent from './ChatConten';
 import { typeCastToMessage } from '@/utils/Chat';
 
-const Pppchat = ({ receiver }: {
-    receiver: string
+const Pppchat = ({ receiver, user }: {
+    receiver: string,
+    user: PushAPI
 }) => {
-    const [address, setAddress] = React.useState<string>("")
-    const [signer, setSigner] = React.useState<any>(null)
+    // const [signer, setSigner] = React.useState<any>(null)
     // const [receiver, setReceiver] = React.useState<string>("")
-    const [showRequest, setShowRequest] = React.useState<boolean>(false)
+    // const [showRequest, setShowRequest] = React.useState<boolean>(false)
+    // const [pushChatUser, setPushChatUser] = React.useState<PushAPI>({} as PushAPI)
+    // const [requests, setRequests] = React.useState<IFeeds[]>([])
+    // const [address, setAddress] = React.useState<string>("")
     const [message, setMessage] = React.useState<string>("")
-    const [pushChatUser, setPushChatUser] = React.useState<PushAPI>({} as PushAPI)
     const [chats, setChats] = React.useState<Message[]>([])
-    const [requests, setRequests] = React.useState<IFeeds[]>([])
     const [liveChats, setLiveChats] = React.useState<Message[]>([])
     const [liveRequests, setLiveRequests] = React.useState<Message[]>([])
 
     useEffect(() => {
-        const initUser = async () => {
-            const getAddress = async () => {
-                const { address, signer } = await getWalletDetails();
-                setSigner(signer);
-                setAddress(address);
-            }
-            const setUser = async () => {
-                await getAddress();
-                if (!address) return;
-                const user = await PushAPI.initialize(signer, {
-                    account: address,
-                    env: CONSTANTS.ENV.STAGING,
-                })
-                console.log(user)
-                setPushChatUser(user)
-                return user;
-            }
-            const user = await setUser();
-            if (!user) return;
+        const initStream = async () => {
             const stream = await user.initStream([CONSTANTS.STREAM.CHAT]);
             console.log(stream)
             stream.on(CONSTANTS.STREAM.CHAT, (message) => {
@@ -55,34 +38,34 @@ const Pppchat = ({ receiver }: {
             })
             stream.connect();
         }
-        initUser();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [address])
+        initStream();
+    }, [user])
 
     const handleSendMessage = async () => {
-        const senderMessage = await pushChatUser.chat.send(receiver, {
+        const senderMessage = await user.chat.send(receiver, {
             content: message,
             type: 'Text'
         })
+        console.log('message sent')
         console.log(senderMessage)
     }
 
-    useEffect(() => {
-        const fetchRequests = async () => {
-            const requests = await pushChatUser.chat?.list('REQUESTS');
-            console.log(requests)
-            console.log("requests")
-            setRequests(requests)
-            if (requests?.length > 0) {
-                setShowRequest(true)
-            }
-        }
-        fetchRequests();
-    }, [pushChatUser.chat])
+    // useEffect(() => {
+    //     const fetchRequests = async () => {
+    //         const requests = await pushChatUser.chat?.list('REQUESTS');
+    //         console.log(requests)
+    //         console.log("requests")
+    //         setRequests(requests)
+    //         if (requests?.length > 0) {
+    //             setShowRequest(true)
+    //         }
+    //     }
+    //     fetchRequests();
+    // }, [pushChatUser.chat])
 
     useEffect(() => {
         const fetchChats = async () => {
-            const chats = await pushChatUser.chat?.history(receiver)
+            const chats = await user.chat?.history(receiver)
             console.log(chats)
             const typeCastedChats = chats?.map((chat) => {
                 return typeCastToMessage({
@@ -93,20 +76,19 @@ const Pppchat = ({ receiver }: {
             setChats(typeCastedChats)
         }
         fetchChats()
-    }, [pushChatUser.chat, receiver])
+    }, [user.chat, receiver])
 
 
     return (
         <div>
-            <h1>PPP Chat</h1>
-            <h2>{address}</h2>
+
             {/* <Input onChange={(e) => setReceiver(e.target.value)} value={receiver} type='email' placeholder='Receiver Eth Address' /> */}
             <div className="grid w-full gap-2">
                 <Textarea onChange={(e) => setMessage(e.target.value)} value={message} placeholder='Message' />
                 <Button onClick={handleSendMessage}>Send message</Button>
             </div>
 
-            {showRequest &&
+            {/* {showRequest &&
                 (
                     <div>
                         Old Requests
@@ -131,7 +113,7 @@ const Pppchat = ({ receiver }: {
                         }
                     </div>
                 )
-            }
+            } */}
             <hr />
             {/* Live Requests
             {
