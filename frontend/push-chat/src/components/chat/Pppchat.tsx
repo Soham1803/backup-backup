@@ -1,45 +1,44 @@
 "use client";
 
-import { getWalletDetails } from '@/utils/Web3'
-import React, { use } from 'react'
+import React from 'react'
 import { useEffect } from 'react';
 import { Input } from '../ui/input';
-import { PushAPI, CONSTANTS, IFeeds, IMessageIPFS } from "@pushprotocol/restapi";
+import { PushAPI, CONSTANTS } from "@pushprotocol/restapi";
 import { Textarea } from '../ui/textarea';
 import { Button } from '../ui/button';
 import ChatContent from './ChatConten';
+import { PushStream } from '@pushprotocol/restapi/src/lib/pushstream/PushStream';
 import { typeCastToMessage } from '@/utils/Chat';
 
 const Pppchat = ({ receiver, user }: {
     receiver: string,
     user: PushAPI
 }) => {
-    // const [signer, setSigner] = React.useState<any>(null)
-    // const [receiver, setReceiver] = React.useState<string>("")
-    // const [showRequest, setShowRequest] = React.useState<boolean>(false)
-    // const [pushChatUser, setPushChatUser] = React.useState<PushAPI>({} as PushAPI)
-    // const [requests, setRequests] = React.useState<IFeeds[]>([])
-    // const [address, setAddress] = React.useState<string>("")
     const [message, setMessage] = React.useState<string>("")
     const [chats, setChats] = React.useState<Message[]>([])
     const [liveChats, setLiveChats] = React.useState<Message[]>([])
     const [liveRequests, setLiveRequests] = React.useState<Message[]>([])
+    const [userStream, setUserStream] = React.useState<PushStream>()
 
     useEffect(() => {
         const initStream = async () => {
             const stream = await user.initStream([CONSTANTS.STREAM.CHAT]);
             console.log(stream)
-            stream.on(CONSTANTS.STREAM.CHAT, (message) => {
-                console.log(message);
-                if (message.event === 'chat.message')
-                    setLiveChats((prev) => [...prev, message])
-                else if (message.event === 'chat.request')
-                    setLiveRequests((prev) => [...prev, message])
-            })
+            setUserStream(stream)
             stream.connect();
         }
         initStream();
     }, [user])
+
+    useEffect(() => {
+        userStream?.on(CONSTANTS.STREAM.CHAT, (message) => {
+            console.log(message);
+            if (message.event === 'chat.message')
+                setLiveChats((prev) => [...prev, message])
+            else if (message.event === 'chat.request')
+                setLiveRequests((prev) => [...prev, message])
+        })
+    }, [userStream])
 
     const handleSendMessage = async () => {
         const senderMessage = await user.chat.send(receiver, {
@@ -65,7 +64,7 @@ const Pppchat = ({ receiver, user }: {
 
     useEffect(() => {
         const fetchChats = async () => {
-            const chats = await user.chat?.history(receiver)
+            const chats = await user?.chat?.history(receiver)
             console.log(chats)
             const typeCastedChats = chats?.map((chat) => {
                 return typeCastToMessage({
@@ -143,7 +142,7 @@ const Pppchat = ({ receiver, user }: {
                 })
             } */}
             Chats
-            <ChatContent messages={chats} />
+            {/* <ChatContent messages={chats} /> */}
             <hr />
             {/* Live Chats */}
             {/* {
@@ -160,7 +159,7 @@ const Pppchat = ({ receiver, user }: {
                     )
                 })
             } */}
-            <ChatContent messages={liveChats} />
+            <ChatContent messages={[...chats, ...liveChats]} />
         </div>
     )
 }

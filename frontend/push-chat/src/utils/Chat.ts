@@ -16,7 +16,7 @@ export const typeCastToMessage = (message: {
             to: toDID,
             message: {
                 type: messageType,
-                content: JSON.stringify(messageObj)
+                content: JSON.parse(JSON.stringify(messageObj)).content
             },
             meta: {
                 group: false
