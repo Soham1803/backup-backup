@@ -14,13 +14,10 @@ contract GithubSnapshot {
         uint256 watchersCount;
         uint256 size;
         bool hasIssues;
-        Branch[] branches;
+        string branches;
     }
 
-    struct Branch {
-        string name;
-        string commitHash;
-    }
+
 
     mapping(bytes32 => RepositorySnapshot) public snapshots;
 
@@ -43,7 +40,7 @@ contract GithubSnapshot {
         uint256 _watchersCount,
         uint256 _size,
         bool _hasIssues,
-        Branch[] memory _branches
+        string memory _branches
     ) external {
         bytes32 snapshotId = keccak256(
             abi.encodePacked(_owner, _repoName, _commitHash, block.timestamp)
@@ -92,7 +89,7 @@ contract GithubSnapshot {
             uint256 watchersCount,
             uint256 size,
             bool hasIssues,
-            Branch[] memory branches
+            string memory branches
         )
     {
         RepositorySnapshot memory snapshot = snapshots[_snapshotId];
