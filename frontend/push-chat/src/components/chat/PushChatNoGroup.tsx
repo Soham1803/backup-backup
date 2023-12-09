@@ -46,10 +46,13 @@ const PushChatNoGroup = () => {
       )}
     </div>
   ) : (
-    <div>
-      <h1>PPP Chat</h1>
-      <h2>Connect Wallet</h2>
+    <div className="h-full w-full flex flex-col items-center justify-start mt-5">
+      <div className="flex flex-col w-4/6 items-start rounded-[6px]"> 
+      <h1 className="text-lg px-3 py-1 text-start">PPP Chat</h1>
+      <h2 className="text-lg px-3 py-1 text-start">Connect Wallet</h2>
+      </div>
       <Button
+        className="w-9/12 px-3 py-1 mt-6"
         onClick={async () => {
           await initUser();
           setWalletConnected(true);

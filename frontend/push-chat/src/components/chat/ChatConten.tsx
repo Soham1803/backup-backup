@@ -6,7 +6,7 @@ type ChatContentProps = {
 
 const ChatContent = ({ messages }: ChatContentProps) => {
   return (
-    <div className="max-h-96 h-64 px-6 py-1 overflow-auto">
+    <div className="max-h-96 h-64 px-6 py-1 overflow-auto border-[1px] rounded-[8px] border-black p-2">
       {messages?.map((message: Message, index: number) => (
         <div
           key={index}

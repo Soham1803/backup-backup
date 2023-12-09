@@ -57,7 +57,7 @@ const PushChatGroup = () => {
     setGroupChatId(newGroup.chatId);
   };
   return walletConnected ? (
-    <div>
+    <div className="relative h-full w-full flex flex-col items-center justify-start">
       {user !== null && user !== undefined && (
         <DMGroupRequests pushChatUser={user} setGroupChatId={setGroupChatId} />
       )}
@@ -101,11 +101,14 @@ const PushChatGroup = () => {
       )}
     </div>
   ) : (
-    <div>
-      <h1> Group chat</h1>
-      <h1> Connect wallet</h1>
+    <div className="mt-6 h-full w-full flex flex-col items-center justify-start">
+      <div className="flex flex-col w-4/6 items-start rounded-[6px]">
+      <h1 className="text-lg px-3 py-1 text-start"> Group chat</h1>
+      <h1 className="text-lg px-3 py-1 text-start"> Connect wallet</h1>
+      </div>
       <br />
       <Button
+        className="w-4/6 px-3 py-1"
         onClick={async () => {
           await userInit();
           setWalletConnected(true);

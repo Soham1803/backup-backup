@@ -29,26 +29,31 @@ const DMRequests = ({ pushChatUser }: {
             {showRequest &&
                 (
                     <div>
+                        <span className='text-lg font-semibold'>
                         Old Requests
+                        </span>
+
+                        <div className='flex flex-col items-center gap-2 justify-start j p-3'>
                         {
                             requests?.map((request) => {
                                 return (
-                                    <div key={request.chatId}>
-                                        {
-                                            JSON.stringify(request.msg.messageObj)
-                                        }
-                                        {':'} {request.msg.fromDID?.split(':')[1]}
-                                        <Button onClick={() => {
+                                    <div className='flex gap-2 flex-row items-center justify-evenly' key={request.chatId}>
+                                        <div className='w-1/3  text-sm flex flex-row items-center'>{ request.msg.messageObj?.content}</div>
+                                        <div className='w-1/3 text-sm truncate'>{':'} {request.msg.fromDID?.split(':')[1]}</div>
+                                        <Button
+                                            className='w-16 h-3/5 text-sm' 
+                                            onClick={() => {
                                             pushChatUser.chat?.accept(request.msg.fromDID?.split(':')[1])
                                             alert("Accepted")
                                             setShowRequest(false)
                                         }
                                         }>: Accept</Button>
-                                        <Button onClick={() => { pushChatUser.chat?.reject(request.msg.fromDID?.split(':')[1]) }}>: Reject</Button>
+                                        <Button className='w-16 h-3/5 text-sm' onClick={() => { pushChatUser.chat?.reject(request.msg.fromDID?.split(':')[1]) }}>: Reject</Button>
                                     </div>
                                 )
                             })
                         }
+                        </div>
                     </div>
                 )
             }
